@@ -28,13 +28,34 @@ class ImediaPerson(form.Schema, IImageScaleTraversable):
     Folderish Person built with Dexterity
     """
 
-    # If you want a schema-defined interface, delete the form.model
-    # line below and delete the matching file in the models sub-directory.
-    # If you want a model-based interface, edit
-    # models/mediaperson.xml to define the content type
-    # and add directives here as necessary.
+    title = schema.TextLine(
+        title=_(u"Name"),
+    )
 
-    form.model("models/mediaperson.xml")
+    bornDate = schema.Datetime(
+        title=_(u"Born date"),
+        required=False,
+    )
+
+    diedDate = schema.Datetime(
+        title=_(u"Died date"),
+        required=False,
+    )
+
+    body = RichText(
+        title=_(u"Biography"),
+        required=False,
+    )
+
+    @invariant
+    def validateBornDateDiedDate(data):
+        if data.bornDate is not None and data.diedDate is not None:
+            if data.bornDate > data.diedDate:
+                raise StartBeforeEnd(_(
+                    u"The born date must be before the died date."))
+    
+
+    
 
 
 # Custom content-type class; objects created for this content type will
@@ -58,7 +79,7 @@ class mediaPerson(dexterity.Container):
 # of this type by uncommenting the grok.name line below or by
 # changing the view class name and template filename to View / view.pt.
 
-class SampleView(grok.View):
+class View(grok.View):
     grok.context(ImediaPerson)
     grok.require('zope2.View')
 
