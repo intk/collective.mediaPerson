@@ -2,4 +2,4 @@
 
 ## Introduction
 
-Folderish Page built with Dexterity
+Folderish Person built with Dexterity
